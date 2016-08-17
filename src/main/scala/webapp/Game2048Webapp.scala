@@ -17,14 +17,17 @@ import scala.scalajs.js.JSApp
 import scala.scalajs.js.annotation.JSExport
 
 object Game2048Webapp extends JSApp {
+  
   object CssClasses {
     val mergedClass = "merged"
     val newClass = "new"
   }
 
-  case class GameBoardState(board: Board, additionalScore: AdditionalScore, newGame: Boolean = false, isGameOver: Boolean = false, userWon: Boolean = false)
+  case class GameBoardState(board: Board, additionalScore: AdditionalScore, newGame: Boolean = false, 
+    isGameOver: Boolean = false, userWon: Boolean = false)
 
   case class BoardBackend($: BackendScope[Unit, GameBoardState]) {
+
     def registerMoveBoardEventHandler() = Callback {
       dom.window.onkeydown = (e: KeyboardEvent) => onKeyDownHandler(e).runNow()
     }

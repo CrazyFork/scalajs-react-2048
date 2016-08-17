@@ -14,6 +14,7 @@ object Board {
   val rows = 4
   val cols = 4
   private val zero = Board((1 to rows).toList.map(_ => Row(List.fill(cols)(EmptyTile))))
+
   val lastTileValue = 2048
 
   sealed trait Direction
@@ -61,7 +62,8 @@ case class Board(rows: List[Row]) {
     else if (nextMoveIsPossible) gameStateAfterMove /*fixme this is kind of a bug, there should be smth like if (boardAfterMove.nextBoard.nextMoveIsPossible)*/
     else GameOver(additionalScore, boardAfterMove)
   }
-
+  
+  //any tile's value is lastTileValue
   private def isCompleted: Boolean = this.rows.flatMap(_.tiles).exists(_.value == lastTileValue)
 
   private def nextMoveIsPossible: Boolean = {
@@ -81,6 +83,7 @@ case class Board(rows: List[Row]) {
 
   private def emptyTileIndices: Rng[(Index, Index)] = {
     val indices = allEmptyIndices
+    //bm:
     Rng.oneofL(NonEmptyList.nel(indices.head, indices.tail))
   }
 
@@ -107,6 +110,7 @@ case class Board(rows: List[Row]) {
     (score.sum, Board(movedRows))
   }
 
+  //bm:
   private def transpose: Board = Board(rows.map(_.tiles).transpose.map(Row.apply))
 
   private def updateAt(row: Index, column: Index)(f: Tile): Board = {
@@ -127,6 +131,7 @@ sealed trait Tile {
 
 object Tiles {
   var counter: Long = 0 /*shame on me*/
+
   def incrAndGetCounter = {
     counter += 1
     counter
@@ -134,6 +139,7 @@ object Tiles {
 
   case class NonEmptyTile(override val value: Int)
                          (override val isNew: Boolean = false, override val isMerged: Boolean = false, override val id: Long) extends Tile
+
   case object EmptyTile extends Tile {
     override def value: Int = 0
     override def isNew: Boolean = false
@@ -146,6 +152,7 @@ case class Row(tiles: List[Tile]) {
 
   private val tilesCount = tiles.size
 
+  //AdditionalScore = Int
   def shiftLeft: (AdditionalScore, Row) = {
     val (firstScore, firstRow) = this.slideLeft.mergeAt(0)
     val (scndScore, scndRow) = firstRow.mergeAt(1)

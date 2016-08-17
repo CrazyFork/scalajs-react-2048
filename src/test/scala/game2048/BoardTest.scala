@@ -8,6 +8,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 class BoardTest extends FlatSpec with Matchers with TableDrivenPropertyChecks{
   import scala.language.implicitConversions
+  
   implicit def intToField(i: Int): Tile = {
     if (i == 0) Tiles.EmptyTile
     else Tiles.NonEmptyTile(i)(id = 0)
